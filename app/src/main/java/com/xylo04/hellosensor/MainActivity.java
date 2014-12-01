@@ -9,7 +9,9 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.media.AudioAttributes;
 import android.os.Bundle;
+import android.os.Vibrator;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -19,11 +21,17 @@ import android.view.ViewGroup;
 import android.os.Build;
 import android.widget.TextView;
 
+import java.util.ResourceBundle;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity implements SensorEventListener {
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private SensorManager sensorManager;
+    private Vibrator vibrator;
+    private ScheduledExecutorService scheduledExecutorService;
     private TextView statusText;
 
     @Override
@@ -31,10 +39,17 @@ public class MainActivity extends Activity implements SensorEventListener {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         statusText = (TextView) findViewById(R.id.status_text);
+
         sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         if (sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION) == null) {
-            statusText.setText(R.string.no_accelerometer);
+            Log.w(TAG, "There is no accelerometer on this device");
         }
+        vibrator = (Vibrator) getSystemService(Context.VIBRATOR_SERVICE);
+        if (!vibrator.hasVibrator()) {
+            Log.w(TAG, "There is no vibrator on this device");
+        }
+
+        scheduledExecutorService = Executors.newScheduledThreadPool(1);
     }
 
     @Override
@@ -46,9 +61,13 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onResume() {
         super.onResume();
+        registerAccelerometer();
+    }
+
+    private void registerAccelerometer() {
         Sensor accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_LINEAR_ACCELERATION);
         if (accelerometer != null) {
-            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_GAME);
+            sensorManager.registerListener(this, accelerometer, SensorManager.SENSOR_DELAY_FASTEST);
             Log.d(TAG, "Registered accelerometer");
         }
     }
@@ -71,7 +90,17 @@ public class MainActivity extends Activity implements SensorEventListener {
                 zAccel,
                 magnitude));
         if (magnitude > 4.0) {
-            Log.d(TAG, String.format("Mag %f", magnitude));
+            Log.d(TAG, String.format("Tap! Mag %f", magnitude));
+            unregisterAccelerometer();
+            if (vibrator.hasVibrator()) {
+                vibrator.vibrate(100L);
+            }
+            scheduledExecutorService.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    registerAccelerometer();
+                }
+            }, 200, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -87,6 +116,10 @@ public class MainActivity extends Activity implements SensorEventListener {
     @Override
     protected void onPause() {
         super.onPause();
+        unregisterAccelerometer();
+    }
+
+    private void unregisterAccelerometer() {
         sensorManager.unregisterListener(this);
         Log.d(TAG, "Unregistered accelerometer");
     }
