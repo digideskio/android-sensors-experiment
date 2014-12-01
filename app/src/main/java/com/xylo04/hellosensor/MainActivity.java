@@ -1,27 +1,18 @@
 package com.xylo04.hellosensor;
 
 import android.app.Activity;
-import android.app.ActionBar;
-import android.app.AlertDialog;
-import android.app.Fragment;
 import android.content.Context;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.media.AudioAttributes;
 import android.os.Bundle;
 import android.os.Vibrator;
 import android.util.Log;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.ViewGroup;
-import android.os.Build;
 import android.widget.TextView;
 
-import java.util.ResourceBundle;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -89,7 +80,7 @@ public class MainActivity extends Activity implements SensorEventListener {
                 yAccel,
                 zAccel,
                 magnitude));
-        if (magnitude > 4.0) {
+        if (magnitude > 3.5) {
             Log.d(TAG, String.format("Tap! Mag %f", magnitude));
             unregisterAccelerometer();
             if (vibrator.hasVibrator()) {
