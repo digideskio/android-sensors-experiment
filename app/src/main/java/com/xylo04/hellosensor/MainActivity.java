@@ -18,11 +18,15 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class MainActivity extends Activity implements SensorEventListener {
+
     private static final String TAG = MainActivity.class.getSimpleName();
 
     private SensorManager sensorManager;
+
     private Vibrator vibrator;
+
     private ScheduledExecutorService scheduledExecutorService;
+
     private TextView statusText;
 
     @Override
@@ -73,7 +77,8 @@ public class MainActivity extends Activity implements SensorEventListener {
         float xAccel = sensorEvent.values[0];
         float yAccel = sensorEvent.values[1];
         float zAccel = sensorEvent.values[2];
-        double magnitude = Math.sqrt(Math.pow(xAccel, 2) + Math.pow(yAccel, 2) + Math.pow(zAccel, 2));
+        double magnitude = Math
+                .sqrt(Math.pow(xAccel, 2) + Math.pow(yAccel, 2) + Math.pow(zAccel, 2));
         statusText.setText(String.format(
                 "x: %f\ny:%f\nz: %f\n|a| %f",
                 xAccel,
