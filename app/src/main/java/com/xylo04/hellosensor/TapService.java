@@ -15,7 +15,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class TapService extends Service  implements SensorEventListener {
+public class TapService extends Service implements SensorEventListener {
 
     private static final String TAG = TapService.class.getSimpleName();
 
