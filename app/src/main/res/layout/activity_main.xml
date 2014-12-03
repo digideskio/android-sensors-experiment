@@ -13,4 +13,27 @@
         android:text="@string/hello_world"
         android:textSize="16dip" />
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Start Service"
+            android:id="@+id/start_service_button"
+            android:layout_weight="1" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/stop_service"
+            android:id="@+id/stop_service_button"
+            android:layout_gravity="center_horizontal|bottom"
+            android:layout_weight="1" />
+
+    </LinearLayout>
+
 </FrameLayout>
